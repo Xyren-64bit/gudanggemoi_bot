@@ -2,8 +2,18 @@
 # FROM File-Sharing-Man <https://github.com/mrismanaziz/File-Sharing-Man/>
 # t.me/SharingUserbot & t.me/Lunatic0de
 
+import osimport asyncio
+import base64
 import os
+import re
+import subprocess
 
+from dotenv import set_key
+from dotenv import set_key
+from pyrogram import filters
+from pyrogram.enums import ChatMemberStatus
+from pyrogram.errors import FloodWait, InputUserDeactivated, UserIsBlocked
+from pyrogram.types import InlineKeyboardMarkup, Message
 from bot import Bot
 from config import (
     ADMINS,
