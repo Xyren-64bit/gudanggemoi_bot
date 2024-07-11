@@ -80,45 +80,4 @@ HEROKU_API_KEY = <code>{HEROKU_API_KEY}</code>
     await Man.edit_text(text)
 
 
-@Bot.on_message(filters.command("edit") & filters.user(ADMINS))
-async def edit_multiple_vars(client: Bot, message: Message):
-    """Mengedit satu atau beberapa variabel konfigurasi dalam file config.env dan selalu restart bot."""
-    if len(message.command) == 1:
-        await message.reply_text(
-            "<b>Penggunaan:<\b>\n"
-            "/edit FORCE_SUB_CHANNEL -100222222\n"
-            "Untuk 2 vars lebih: /edit FORCE_SUB_CHANNEL -1009999 ; FORCE_SUB_GROUP -10088888"
-        )
-        return
 
-    var_pairs = message.text.split(" ", 1)[1].strip().split(";")
-
-    for var_pair in var_pairs:
-        try:
-            var_name, new_value = var_pair.strip().split(" ")
-            set_key("config.env", var_name, new_value)
-
-            try:
-                await message.edit_text(f"✅ Variabel **{var_name}** berhasil diubah menjadi **{new_value}**")
-            except pyrogram.errors.exceptions.bad_request_400.MessageIdInvalid:  
-                await message.reply_text(f"✅ Variabel **{var_name}** berhasil diubah menjadi **{new_value}** (Bot sedang restart)")
-
-        except ValueError:
-            await message.reply_text(f"❌ Format tidak valid untuk pasangan: {var_pair}")
-
-    restart_message = await message.reply_text("🔄 Bot akan direstart...")
-
-    subprocess.Popen(["python3", "main.py"])
-
-    try:
-        # Tunggu sebentar agar bot baru sempat aktif
-        await asyncio.sleep(10)
-
-        await restart_message.edit_text(
-            f"[🔥 BERHASIL DIAKTIFKAN! 🔥]\n\nBOT Dibuat oleh @{OWNER}"
-        )
-    except pyrogram.errors.exceptions.bad_request_400.MessageIdInvalid:
-
-        pass
-
-    await client.stop()
