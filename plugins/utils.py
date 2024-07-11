@@ -85,7 +85,7 @@ async def edit_multiple_vars(client: Bot, message: Message):
     """Mengedit satu atau beberapa variabel konfigurasi dalam file config.env dan selalu restart bot."""
     if len(message.command) == 1:
         await message.reply_text(
-            "**Penggunaan:**\n"
+            "<b>Penggunaan:<\b>\n"
             "/edit FORCE_SUB_CHANNEL -100222222\n"
             "Untuk 2 vars lebih: /edit FORCE_SUB_CHANNEL -1009999 ; FORCE_SUB_GROUP -10088888"
         )
