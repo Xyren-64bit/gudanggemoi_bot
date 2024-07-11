@@ -83,8 +83,12 @@ HEROKU_API_KEY = <code>{HEROKU_API_KEY}</code>
 @Bot.on_message(filters.command("edit") & filters.user(ADMINS))
 async def edit_multiple_vars(client: Bot, message: Message):
     """Mengedit satu atau beberapa variabel konfigurasi dalam file config.env dan selalu restart bot."""
-    if len(message.command) < 3:
-        await message.reply_text("**Penggunaan:**\n/edit [-b] nama_variabel1 nilai_baru1 [; nama_variabel2 nilai_baru2 ...]")
+    if len(message.command) == 1: 
+        await message.reply_text(
+            "**Penggunaan:**\n"
+            "/edit FORCE_SUB_CHANNEL -100222222\n" 
+            "Untuk 2 vars lebih: /edit FORCE_SUB_CHANNEL -1009999 ; FORCE_SUB_GROUP -10088888"
+        )
         return
 
     var_pairs = message.text.split(" ", 1)[1].strip().split(";")  
@@ -97,8 +101,12 @@ async def edit_multiple_vars(client: Bot, message: Message):
         except ValueError:
             await message.reply_text(f"❌ Format tidak valid untuk pasangan: {var_pair}")
 
-    restart_message = await message.reply_text("🔄 Bot akan direstart...")     
+    restart_message = await message.reply_text("🔄 Bot akan direstart...")
+
     subprocess.Popen(["python3", "main.py"])
+
     await asyncio.sleep(10)
+
     await restart_message.edit_text(f"[🔥 BERHASIL DIAKTIFKAN! 🔥]\n\nBOT Dibuat oleh @{OWNER}")
+
     await client.stop()
