@@ -22,6 +22,7 @@ from helper_func import encode
             "users",
             "broadcast",
             "ping",
+            "edit",
             "uptime",
             "batch",
             "logs",
