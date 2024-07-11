@@ -2,7 +2,8 @@
 # FROM File-Sharing-Man <https://github.com/mrismanaziz/File-Sharing-Man/>
 # t.me/SharingUserbot & t.me/Lunatic0de
 
-import osimport asyncio
+import os
+import asyncio
 import base64
 import os
 import re
