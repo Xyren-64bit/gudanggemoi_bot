@@ -5,6 +5,7 @@
 import os
 import subprocess
 import sys
+import asyncio
 from dotenv import load_dotenv, set_key
 from pyrogram import Client, filters
 from pyrogram.types import Message
