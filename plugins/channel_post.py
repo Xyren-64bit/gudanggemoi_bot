@@ -34,7 +34,7 @@ from helper_func import encode
             "update",
             "stats",
             "vars",
-            "edit',
+            "edit",
             "id",
         ]
     )
