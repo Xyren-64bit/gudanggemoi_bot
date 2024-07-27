@@ -39,9 +39,9 @@ async def edit_variable(client: Bot, message: Message):
 async def restart_bot(client: Bot, message: Message):
     """Performs a hard restart of the bot."""
 
-    restart_message = await message.reply_text("Melakukan hard restart...")
+    restart_message = await message.reply_text("**Melakukan hard restart...**")
 
-
+    # Muat ulang variabel lingkungan sebelum restart
     load_dotenv("config.env", override=True)
 
     async def restart_task():
@@ -51,12 +51,10 @@ async def restart_bot(client: Bot, message: Message):
             LOGGER(__name__).warning("Penghentian bot timeout. Memaksa keluar.")
         finally:
             LOGGER(__name__).info("Restarting bot...")
-            subprocess.Popen([sys.executable, "main.py"]) # Memperbaiki argumen subprocess
+            subprocess.Popen([sys.executable, "main.py"])
 
     asyncio.create_task(restart_task())
 
     # Edit pesan setelah restart selesai
     await asyncio.sleep(5)
     await restart_message.edit("✅ Proses restart selesai. Bot berhasil diaktifkan kembali.")
-
-    sys.exit(0)  # Hentikan proses saat ini
