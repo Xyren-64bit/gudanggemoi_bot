@@ -32,6 +32,7 @@ from helper_func import encode
             "setvar",
             "speedtest",
             "update",
+            "restart",
             "stats",
             "vars",
             "edit",
