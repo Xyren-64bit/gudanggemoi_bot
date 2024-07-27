@@ -1,5 +1,9 @@
+# (©)Codexbotz
+# Recode by @mrismanaziz
+# t.me/SharingUserbot & t.me/Lunatic0de
+
 import os
-import subprocess
+import sys
 from dotenv import set_key
 from pyrogram import Client, filters
 from pyrogram.types import Message
@@ -8,7 +12,7 @@ from config import ADMINS, LOGGER
 
 @Bot.on_message(filters.command("edit") & filters.user(ADMINS))
 async def edit_variable(client: Bot, message: Message):
-    """Edit variables in config.env and trigger a restart using 'bash start'."""
+    """Edit variables in config.env and trigger a soft restart."""
 
     cmd = message.text.split(" ", 2)
     if len(cmd) < 3:
@@ -29,20 +33,11 @@ async def edit_variable(client: Bot, message: Message):
         return
 
     # Inform the admin about the successful change and restart
-    restart_message = await message.reply_text(
-        f"<b>Berhasil mengubah nilai variabel {var_name} menjadi {new_value}.<\b>\n"
+    await message.reply_text(
+        f"Berhasil mengubah nilai variabel {var_name} menjadi {new_value}.\n"
         "Melakukan restart bot untuk menerapkan perubahan..."
     )
 
-    # Trigger a restart using 'bash start'
-    try:
-        subprocess.Popen(["bash", "start"])
-    except FileNotFoundError:
-        await restart_message.edit("❌ Tidak dapat menemukan file 'start'. Pastikan file tersebut ada dan memiliki izin eksekusi.")
-    except Exception as e:
-        await restart_message.edit(f"❌ Terjadi kesalahan saat me-restart: {e}")
-    else:
-        # Edit the message after successful restart
-        await restart_message.edit(
-            f"✅ Bot berhasil diaktifkan kembali dengan nilai baru untuk `{var_name}`: `{new_value}`"
-        )
+    # Soft restart the bot
+    args = [sys.executable, "main.py"]
+    os.execv(sys.executable, args)
