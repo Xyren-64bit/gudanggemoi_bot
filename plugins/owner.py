@@ -41,8 +41,9 @@ async def restart_bot(client: Bot, message: Message):
 
     restart_message = await message.reply_text("**Melakukan hard restart...**")
 
-    # Muat ulang variabel lingkungan sebelum restart
-    load_dotenv("config.env", override=True)
+    load_dotenv("config.env", override=True) 
+    
+    del sys.modules["config"]
 
     async def restart_task():
         try:
@@ -55,6 +56,5 @@ async def restart_bot(client: Bot, message: Message):
 
     asyncio.create_task(restart_task())
 
-    # Edit pesan setelah restart selesai
     await asyncio.sleep(5)
     await restart_message.edit("✅ Proses restart selesai. Bot berhasil diaktifkan kembali.")
