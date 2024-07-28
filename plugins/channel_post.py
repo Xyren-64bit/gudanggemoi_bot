@@ -31,6 +31,7 @@ from helper_func import encode
             "getvar",
             "setvar",
             "speedtest",
+            "silent",
             "update",
             "restart",
             "stats",
