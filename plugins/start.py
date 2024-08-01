@@ -16,7 +16,7 @@ from config import (
     START_MSG,
 )
 from database.database import del_user, full_userbase
-from database.sql import add_user, delete_user, full_userbase, query_msg
+from database.sql import add_user, delete_user, full_users, query_msg
 from database.database import add_user_on_start
 from pyrogram import filters
 from pyrogram.enums import ParseMode
@@ -179,6 +179,14 @@ async def get_users(client: Bot, message: Message):
         chat_id=message.chat.id, text="<code>Processing ...</code>"
     )
     users = await full_userbase()
+    await msg.edit(f"{len(users)} <b>Pengguna menggunakan bot ini</b>")
+
+@Bot.on_message(filters.command(["total", "stats"]) & filters.user(ADMINS))
+async def get_users(client: Bot, message: Message):
+    msg = await client.send_message(
+        chat_id=message.chat.id, text="<code>Processing ...</code>"
+    )
+    users = await full_users()
     await msg.edit(f"{len(users)} <b>Pengguna menggunakan bot ini</b>")
 
 
