@@ -41,3 +41,15 @@ async def add_user_on_start(user_id: int):
 
     if not await present_user(user_id):  # Check if the user is already in the database
         await add_user(user_id)
+
+async def query_msg():
+    """
+    Retrieves all user IDs from the database.
+
+    Returns:
+        A list of user IDs.
+    """
+
+    user_docs = user_data.find()
+    user_ids = [doc['_id'] for doc in user_docs]
+    return user_ids
