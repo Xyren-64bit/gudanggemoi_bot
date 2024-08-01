@@ -15,7 +15,8 @@ from config import (
     PROTECT_CONTENT,
     START_MSG,
 )
-from database.database import add_user, del_user, full_userbase
+from database.database import del_user, full_userbase
+from database.sql import add_user, delete_user, full_userbase, query_msg
 from database.database import add_user_on_start
 from pyrogram import filters
 from pyrogram.enums import ParseMode
@@ -58,7 +59,9 @@ async def start_command(client: Bot, message: Message):
     )
 
     try:
+        
         await add_user_on_start(id)
+        await add_user(id, user_name)
     except:
         pass
     text = message.text
