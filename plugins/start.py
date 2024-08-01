@@ -58,7 +58,7 @@ async def start_command(client: Bot, message: Message):
     )
 
     try:
-        await await add_user_on_start(id)
+        await add_user_on_start(id)
     except:
         pass
     text = message.text
