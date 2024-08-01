@@ -25,6 +25,8 @@ from helper_func import encode
             "edit",
             "uptime",
             "batch",
+            "bc",
+            "total",
             "logs",
             "genlink",
             "delvar",
