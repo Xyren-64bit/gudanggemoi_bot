@@ -10,8 +10,7 @@ from dotenv import load_dotenv, set_key
 from pyrogram import Client, filters, enums
 from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated
 from pyrogram.types import Message
-from bot import Bot
-from database.sql import full_userbase 
+from bot import Bot 
 from config import ADMINS, LOGGER
 
 @Bot.on_message(filters.command("edit") & filters.user(ADMINS))
@@ -62,39 +61,3 @@ async def restart_bot(client: Bot, message: Message):
     await restart_message.edit("✅ Proses restart selesai. Bot berhasil diaktifkan kembali.")
 
 
-@Bot.on_message(filters.command("silent") & filters.user(ADMINS))
-async def silent_all_media(client: Bot, message: Message):
-    """
-    This function deletes all media messages (except text and commands) from the first 1000 users in the database.
-    """
-
-    await message.reply_text("Memulai proses silent...")
-
-    users = await full_userbase()
-    deleted_count = 0
-    user_count = 0
-
-    for user in users:
-        if user_count >= 1000: 
-            break
-
-        user_id = user.id
-        user_count += 1
-
-        try:
-            async for user_message in client.get_chat_history(user_id):
-                if (
-                    user_message.media
-                    and user_message.media in (enums.MessageMediaType.PHOTO, enums.MessageMediaType.VIDEO)
-                    and user_message.caption
-                    and not user_message.text.startswith("/")
-                ):
-                    await client.delete_messages(user_id, user_message.id)
-                    deleted_count += 1
-                    await asyncio.sleep(2) 
-        except (FloodWait, UserIsBlocked, InputUserDeactivated):
-            continue
-
-        await asyncio.sleep(120)  
-
-    await message.reply_text(f"Proses silent selesai!\n\nMedia berhasil dihapus dari {deleted_count} ID pengguna.")
