@@ -15,7 +15,8 @@ from config import (
     PROTECT_CONTENT,
     START_MSG,
 )
-from database.sql import add_user, delete_user, full_userbase, query_msg
+from database.database import add_user, delete_user, full_userbase
+from database import add_user_on_start
 from pyrogram import filters
 from pyrogram.enums import ParseMode
 from pyrogram.errors import FloodWait, InputUserDeactivated, UserIsBlocked
@@ -57,7 +58,7 @@ async def start_command(client: Bot, message: Message):
     )
 
     try:
-        await add_user(id, user_name)
+        await await add_user_on_start(id)
     except:
         pass
     text = message.text
@@ -178,10 +179,10 @@ async def get_users(client: Bot, message: Message):
     await msg.edit(f"{len(users)} <b>Pengguna menggunakan bot ini</b>")
 
 
-@Bot.on_message(filters.command("broadcast") & filters.user(ADMINS))
+@Bot.on_message(filters.private & filters.command('broadcast') & filters.user(ADMINS))
 async def send_text(client: Bot, message: Message):
     if message.reply_to_message:
-        query = await query_msg()
+        query = await full_userbase()  # Ambil semua user dari database
         broadcast_msg = message.reply_to_message
         total = 0
         successful = 0
@@ -189,39 +190,38 @@ async def send_text(client: Bot, message: Message):
         deleted = 0
         unsuccessful = 0
 
-        pls_wait = await message.reply(
-            "<code>Broadcasting Message Tunggu Sebentar...</code>"
-        )
-        for row in query:
-            chat_id = int(row[0])
-            if chat_id not in ADMINS:
-                try:
-                    await broadcast_msg.copy(chat_id, protect_content=PROTECT_CONTENT)
-                    successful += 1
-                except FloodWait as e:
-                    await asyncio.sleep(e.x)
-                    await broadcast_msg.copy(chat_id, protect_content=PROTECT_CONTENT)
-                    successful += 1
-                except UserIsBlocked:
-                    await delete_user(chat_id)
-                    blocked += 1
-                except InputUserDeactivated:
-                    await delete_user(chat_id)
-                    deleted += 1
-                except BaseException:
-                    unsuccessful += 1
-                total += 1
-        status = f"""<b><u>Berhasil Broadcast</u>
-Jumlah Pengguna: <code>{total}</code>
-Berhasil: <code>{successful}</code>
-Gagal: <code>{unsuccessful}</code>
-Pengguna diblokir: <code>{blocked}</code>
-Akun Terhapus: <code>{deleted}</code></b>"""
+        pls_wait = await message.reply("<i>Broadcasting Message.. This will Take Some Time</i>")
+        for chat_id in query:  # Iterasi melalui semua user ID
+            try:
+                await broadcast_msg.copy(chat_id)
+                successful += 1
+            except FloodWait as e:
+                await asyncio.sleep(e.x)
+                await broadcast_msg.copy(chat_id)
+                successful += 1
+            except UserIsBlocked:
+                await del_user(chat_id)
+                blocked += 1
+            except InputUserDeactivated:
+                await del_user(chat_id)
+                deleted += 1
+            except Exception as e:  # Tangkap semua jenis exception lainnya
+                unsuccessful += 1
+                LOGGER(__name__).error(f"Error saat broadcast ke {chat_id}: {e}")  # Log error untuk debugging
+            total += 1
+
+        status = f"""<b><u>Broadcast Completed</u>
+
+Total Users: <code>{total}</code>
+Successful: <code>{successful}</code>
+Blocked Users: <code>{blocked}</code>
+Deleted Accounts: <code>{deleted}</code>
+Unsuccessful: <code>{unsuccessful}</code></b>"""
+
         return await pls_wait.edit(status)
+
     else:
-        msg = await message.reply(
-            "<code>Gunakan Perintah ini Harus Sambil Reply ke pesan telegram yang ingin di Broadcast.</code>"
-        )
+        msg = await message.reply("<b>Gunakan Perintah ini Harus Sambil Reply ke pesan telegram yang ingin di Broadcast.</b>")
         await asyncio.sleep(8)
         await msg.delete()
 
