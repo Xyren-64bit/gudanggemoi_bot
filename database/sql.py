@@ -49,7 +49,7 @@ async def delete_user(id):
         SESSION.commit()
 
 
-async def full_userbase():
+async def full_users():
     users = SESSION.query(Broadcast).all()
     SESSION.close()
     return users
