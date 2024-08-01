@@ -16,7 +16,7 @@ from config import (
     START_MSG,
 )
 from database.database import add_user, del_user, full_userbase
-from database import add_user_on_start
+from database.database import add_user_on_start
 from pyrogram import filters
 from pyrogram.enums import ParseMode
 from pyrogram.errors import FloodWait, InputUserDeactivated, UserIsBlocked
